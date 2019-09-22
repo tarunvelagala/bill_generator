@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:bill_generator/models/model.dart';
@@ -10,6 +11,71 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  showBill() {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Container(
+              width: double.maxFinite,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    child: Text(
+                      "Order Reciept".toUpperCase(),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 20.0),
+                    ),
+                  ),
+                  Divider(
+                    color: Colors.grey,
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: ScopedModel.of<CartModel>(context,
+                            rebuildOnChange: true)
+                        .total,
+                    itemBuilder: (context, index) {
+                      return ScopedModelDescendant<CartModel>(
+                        builder: (context, child, model) {
+                          return ListTile(
+                            title: Text(model.cart[index].qty.toString() +
+                                " x " +
+                                model.cart[index].title),
+                            trailing: Text("\₹ " +
+                                (model.cart[index].qty *
+                                        model.cart[index].price)
+                                    .toString()),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  Divider(
+                    color: Colors.grey,
+                  ),
+                  ListTile(
+                    title: Text(
+                      "Total",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600, fontSize: 18.0),
+                    ),
+                    trailing: Text("\₹ " +
+                        ScopedModel.of<CartModel>(context,
+                                rebuildOnChange: true)
+                            .totalCartValue
+                            .toString()),
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,8 +162,8 @@ class _CartPageState extends State<CartPage> {
                         color: Colors.yellow[900],
                         textColor: Colors.white,
                         elevation: 0,
-                        child: Text("BUY NOW"),
-                        onPressed: () {},
+                        child: Text("Bill".toUpperCase()),
+                        onPressed: () => showBill(),
                       ))
                 ])));
   }

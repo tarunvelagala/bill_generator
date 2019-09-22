@@ -7,7 +7,6 @@ class CartModel extends Model {
   int get total => cart.length;
   void addProduct(product) {
     int index = cart.indexWhere((i) => i.id == product.id);
-    print(index);
     if (index != -1) {
       updateProduct(product, product.qty + 1);
     } else {
